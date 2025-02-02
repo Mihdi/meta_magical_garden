@@ -512,7 +512,7 @@ if __name__ == '__main__':
 
 	game_iterate=snake_iteration
 	agents=[
-		[ord('↓') for _ in range(2)] + [ord('←') for _ in range(3)],
+		# [ord('↓') for _ in range(2)] + [ord('←') for _ in range(3)],
 		[
 			ord('L'), ord('↑'),  4, ord('J'), ord('-'), 10, ord('↑'), ord('J'), 0,  0,
 			ord('L'), ord('→'), 14, ord('J'), ord('-'), 20, ord('→'), ord('J'), 0, 10,
