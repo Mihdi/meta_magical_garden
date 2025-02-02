@@ -1,4 +1,4 @@
-# Meta ~~M̸̢̧̢̖̮̥̪͕̘̳̫̞̮͔̮͇̭͙̺̽͌̔̆́͊̈́̿͒̑̓͂͒̌̉͒͗̌̀̃̀͑̕̚͜a̸̢̘̬̗̻̳̯̤̦̩̜͙͈͉̫͉̓̐̀͊̕ģ̵̹̠̞̲̺̭̝̠̼͇͕̫͈͔̳̮̬̺͔̺̰͇̣̝̯̖̆i̷̡̨̙͍̥͍̙̲͍̭͚̠̦̮̹͍̟̖̯̦͎̩̝̮̒̈̃̂͂̐̆͗͐̈́̍̚͠c̴̤̠̬̱̹̖̱̐͌́͑͋͆͐͐̾̀͂͋ắ̸̛̤̭̞͕̘͔͙̄͑́̍͗̀ḻ̶̢̢̹͇̗͓̰̽̔̓̐́̊̋̓́̒̌̔̃͛͂̐̐̉̿̚̚̕͝͝ͅ~~ Garden
+# Meta ~~M̵̠̾̚ę̶̝̚ṱ̶̅̍a̴̬͊͘ ̷͈͆̈G̵͎͙͗̋a̸͈̿ŕ̸̠͎̎d̵̨̀ḛ̷̳̄n̸̥̏~~ Garden
 
 This project aims at being a playground for quirky exploration.
 It essentially involves making loosely RNA-inspired self-modifying sequences of instructions and data play various games in a generic fashion.
