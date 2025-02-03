@@ -70,6 +70,7 @@ def main():
 	game_state['agent_positions'] = [
 		convert_2d_position_to_1d(0, 0, grid_column_length)
 	]
+	game_state['previous_actions'] = [None for _ in agents]
 
 	post_iteration_callback = debug_post_iteration_callback
 

@@ -1,73 +1,72 @@
 from typing import Dict, Optional, List, Tuple
 from utils.grid_utils import convert_1d_position_to_2d, convert_2d_position_to_1d
 
-def cmp_generic_move_to_unsafe_position(
-	position,
-	column_length,
-	offset_col,
-	offset_row
-) -> int:
-	col, row = convert_1d_position_to_2d(position, column_length)
-
-	new_col = col + offset_col
-	new_row = row + offset_row
-
-	return  convert_2d_position_to_1d(new_col, new_row, column_length)
-
-
-def is_valid_1d_position(position, grid_length) -> bool:
-	return (0 <= position) and (position < grid_length)
+def is_valid_position(col, row, column_length, row_length):
+	return (
+		0 <= col and col < column_length
+		and
+		0 <= row and row < row_length
+	)
 
 
 def cmp_generic_move_to_safe_position(
 	grid_length,
 	position,
 	column_length,
+	row_length,
 	offset_col,
 	offset_row
 ) -> Optional[int]:
-	unsafe_position = cmp_generic_move_to_unsafe_position(
-		position=position,
+	col, row = convert_1d_position_to_2d(position, column_length)
+
+	new_col = col + offset_col
+	new_row = row + offset_row
+
+	if is_valid_position(
+		col=new_col,
+		row=new_row,
 		column_length=column_length,
-		offset_col=offset_col,
-		offset_row=offset_row
-	)
-	if is_valid_1d_position(unsafe_position, grid_length):
-		return unsafe_position
+		row_length=row_length
+	):
+		return convert_2d_position_to_1d(new_col, new_row, column_length)
 	return None
 
-def cmp_safe_position_on_move_up(agent_pos, grid_length, column_length) -> Optional[int]:
+def cmp_safe_position_on_move_up(agent_pos, grid_length, column_length, row_length) -> Optional[int]:
 	return cmp_generic_move_to_safe_position(
 		grid_length=grid_length,
 		position=agent_pos,
 		column_length=column_length,
+		row_length=row_length,
 		offset_col=(0),
 		offset_row=(-1),
 	)
 
-def cmp_safe_position_on_move_down(agent_pos, grid_length, column_length) -> Optional[int]:
+def cmp_safe_position_on_move_down(agent_pos, grid_length, column_length, row_length) -> Optional[int]:
 	return cmp_generic_move_to_safe_position(
 		grid_length=grid_length,
 		position=agent_pos,
 		column_length=column_length,
+		row_length=row_length,
 		offset_col=(0),
 		offset_row=(1),
 	)
 
-def cmp_safe_position_on_move_right(agent_pos, grid_length, column_length) -> Optional[int]:
+def cmp_safe_position_on_move_right(agent_pos, grid_length, column_length, row_length) -> Optional[int]:
 	return cmp_generic_move_to_safe_position(
 		grid_length=grid_length,
 		position=agent_pos,
 		column_length=column_length,
+		row_length=row_length,
 		offset_col=(1),
 		offset_row=(0),
 	)
 
-def cmp_safe_position_on_move_left(agent_pos, grid_length, column_length) -> Optional[int]:
+def cmp_safe_position_on_move_left(agent_pos, grid_length, column_length, row_length) -> Optional[int]:
 	return cmp_generic_move_to_safe_position(
 		grid_length=grid_length,
 		position=agent_pos,
 		column_length=column_length,
+		row_length=row_length,
 		offset_col=(-1),
 		offset_row=(0),
 	)
@@ -92,6 +91,7 @@ def snake_iteration(
 	grid = state['grid']
 	grid_column_length = state['grid_column_length']
 	grid_row_length = state['grid_row_length']
+	previous_actions = state['previous_actions']
 
 	# sanity check
 	assert len(actions) == len(agent_positions)
@@ -109,15 +109,19 @@ def snake_iteration(
 		agent_position = agent_positions[agent_id]
 		chosen_action = actions[agent_id]
 
-		if chosen_action is None:
-			print("chose no action this round")
+		if chosen_action not in ACTION_SET:
+			if previous_actions[agent_id] not in ACTION_SET:
+				chosen_action = ord("→") # if during first round agent didn't chose an action, there's a default
+			else:
+				chosen_action = previous_actions[agent_id]
+			print(f"chose no action this round, defaulted to <{chr(chosen_action)}>")
 		else: 
 			print(f"chosen action is <{chr(chosen_action)}>")
 
 		if chosen_action not in ACTION_SET:
 			continue
 
-		new_position = ACTION_SET[chosen_action](agent_position, len(grid), grid_column_length)
+		new_position = ACTION_SET[chosen_action](agent_position, len(grid), grid_column_length, grid_row_length)
 		if new_position is None:
 			new_dead_agents[agent_id] = True
 			continue
@@ -137,6 +141,10 @@ def snake_iteration(
 	new_state['grid'] = new_grid
 	new_state['grid_column_length'] = grid_column_length
 	new_state['grid_row_length'] = grid_row_length
+	new_state['previous_actions'] = [
+		actions[agent_id] if actions[agent_id] not in ACTION_SET else previous_actions[agent_id]
+		for agent_id in range(len(actions))
+	]
 
 	# resources
 	new_resources = [None for _ in agent_positions]
