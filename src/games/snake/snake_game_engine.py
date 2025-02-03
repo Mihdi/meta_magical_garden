@@ -92,6 +92,7 @@ def snake_iteration(
 	grid_column_length = state['grid_column_length']
 	grid_row_length = state['grid_row_length']
 	previous_actions = state['previous_actions']
+	turn_count = state['turn_count']
 
 	# sanity check
 	assert len(actions) == len(agent_positions)
@@ -141,6 +142,7 @@ def snake_iteration(
 	new_state['grid'] = new_grid
 	new_state['grid_column_length'] = grid_column_length
 	new_state['grid_row_length'] = grid_row_length
+	new_state['turn_count'] = turn_count + 1
 	new_state['previous_actions'] = [
 		actions[agent_id] if actions[agent_id] not in ACTION_SET else previous_actions[agent_id]
 		for agent_id in range(len(actions))
