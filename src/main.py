@@ -58,10 +58,6 @@ def main():
 		]
 	]
 
-	for agent in agents:
-		for symbol in agent:
-			print(f"`{chr(symbol)}", end="`,\t")
-	print("")
 
 	pointers = [0 for _ in agents]
 	agents_freeze_values = [0 for _ in agents]
