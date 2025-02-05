@@ -1,4 +1,4 @@
-# each tick, game takes vector of actions and a state and returns a vector of resources and a state
+# each tick, game takes vector of actions and a state and returns a state
 # each action requires↲ a cost in resources, and a cost in tick. an agent is frozen during tick cost
 # an agent is defined by a memory space that contains both instructions and data. It executes instructions incrementally following a pointer. There may be jump instructions. instructions are sent as a (possibly useless) action to the game, or modify the internal state of the agent.
 # if an agent pointer reaches an illegal position, the agent dies
@@ -52,7 +52,7 @@ def iterate(
 		new_pointers[agent_id] = instruction_result['new_agent_pointer']
 		agents_freeze_values[agent_id] += instruction_costs[current_instruction_symbol]
 
-	resources, game_state = game_iterate(
+	game_state = game_iterate(
 		actions=actions,
 		state=game_state,
 	)

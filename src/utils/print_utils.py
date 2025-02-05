@@ -1,7 +1,12 @@
 def grid_to_str(grid, grid_column_length):
 	out = "[\n\t["
 	for i in range(len(grid)):
-		out += '🐍' if grid[i] else str(i)
+		if grid[i] == 0:
+			out += str(i)
+		if grid[i] == 1:
+			out += '🐍'
+		if grid[i] == 2:
+			out += '🍎'
 		if i % grid_column_length == (grid_column_length - 1):
 			out += "]\n"
 			if i != (len(grid) - 1):

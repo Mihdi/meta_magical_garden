@@ -1,4 +1,4 @@
-from typing import Dict, Optional, List, Tuple
+from typing import Callable, Dict, Optional, List
 from utils.grid_utils import convert_1d_position_to_2d, convert_2d_position_to_1d
 
 def is_valid_position(col, row, column_length, row_length):
@@ -74,7 +74,8 @@ def cmp_safe_position_on_move_left(agent_pos, grid_length, column_length, row_le
 def snake_iteration(
 	actions: List[int],
 	state: Dict,
-) -> Tuple[List[any], Dict]:
+	food_generator_per_tick: Callable[int, [List[int]]] # takes turn count returns list of new food positions
+) -> Dict:
 	'''
 		For the first version, snakes do not get bigger and do not die if they hit another snake
 	'''
@@ -93,14 +94,25 @@ def snake_iteration(
 	grid_row_length = state['grid_row_length']
 	previous_actions = state['previous_actions']
 	turn_count = state['turn_count']
+	food_positions = state['food_positions']
+	resources = state['resources']
 
 	# sanity check
 	assert len(actions) == len(agent_positions)
 	assert len(grid) == (grid_column_length * grid_row_length)
-
+	assert len(grid) == len(food_positions)
+	assert len(resources) == len(agent_positions)
+	assert len(previous_actions) == len(agent_positions)
+	assert len(dead_agents) == len(agent_positions)
 
 	new_dead_agents = [da for da in dead_agents]
 	new_agent_positions = [ap for ap in agent_positions]
+	new_food_positions = [f for f in food_positions]
+
+	# generate new food
+	generated_food = food_generator_per_tick(turn_count)
+	for pos in generated_food:
+		new_food_positions[pos] = True
 
 	# apply every agent's action if it is still alive
 	for agent_id in range(len(agent_positions)):
@@ -128,12 +140,29 @@ def snake_iteration(
 			continue
 		new_agent_positions[agent_id] = new_position
 
-	# mark agent positions on the grid
+	# resources
+	new_resources = [resources[agent_id] for agent_id in range(len(agent_positions))]
+
+	# feed agents
+	for agent_id in range(len(actions)):
+		agent_position = new_agent_positions[agent_id]
+		if not new_dead_agents[agent_id] and new_food_positions[agent_id]:
+			new_resources[agent_id]['food'] += 1
+			new_food_positions[agent_id] = False
+
+	# fill the new grid
 	new_grid = [False for _ in grid]
+
+	# mark food positions on the grid
+	for index in range(len(grid)):
+		if new_food_positions[index]:
+			new_grid[index] = 2
+
+	# mark agent positions on the grid
 	for agent_id in range(len(actions)):
 		agent_position = new_agent_positions[agent_id]
 		if not new_dead_agents[agent_id]:
-			new_grid[agent_position] = True
+			new_grid[agent_position] = 1
 
 	# generate_new_state
 	new_state = dict()
@@ -147,8 +176,12 @@ def snake_iteration(
 		actions[agent_id] if actions[agent_id] not in ACTION_SET else previous_actions[agent_id]
 		for agent_id in range(len(actions))
 	]
+	new_state['food_positions'] = new_food_positions
+	new_state['resources'] = new_resources
 
-	# resources
-	new_resources = [None for _ in agent_positions]
+	return new_state
 
-	return (new_resources, new_state)
+def snake_game_generator(
+	food_generator_per_tick: Callable[int, [List[int]]]
+):
+	return lambda actions, state, food_generator_per_tick=food_generator_per_tick: snake_iteration(actions, state, food_generator_per_tick)
