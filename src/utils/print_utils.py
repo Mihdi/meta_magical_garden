@@ -43,7 +43,9 @@ def print_agent(agent, pointer):
 	print(agent_to_str(agent, pointer))
 
 
-def debug_post_iteration_callback(result, grid_only=False):
+def debug_post_iteration_callback(result, grid_only=False, verbose=False):
+	if verbose:
+		print(result)
 	if not grid_only:
 		print("game_state['agent_positions']", result['game_state']['agent_positions'])
 		print("game_state['agents']:")
@@ -51,3 +53,5 @@ def debug_post_iteration_callback(result, grid_only=False):
 		print("grid:")
 	grid_column_length = result['game_state']['grid_column_length']
 	print_grid(result['game_state']['grid'], grid_column_length)
+	for agent_id in range(len(result['agents'])):
+		print(f"snake #{agent_id} has <{result['game_state']['resources'][agent_id]['food']}> resources.")

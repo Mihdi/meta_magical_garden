@@ -26,7 +26,7 @@ def conditionally_jumps_to_position_if_next_is_0(
 		return None
 
 	output = dict()
-	output['order'] = ord('J')
+	output['order'] = None
 	output['new_agent'] = agent  
 	output['new_agent_pointer'] = new_pointer
 	return output
@@ -92,7 +92,7 @@ def load_state_at_position(
 	new_agent = [agent[i] if i != position_symbol else value_symbol for i in range(len(agent))]
 
 	output = dict()
-	output['order'] = ord('L')
+	output['order'] = None
 	output['new_agent'] = new_agent
 	output['new_agent_pointer'] = new_pointer
 	return output

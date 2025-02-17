@@ -83,7 +83,7 @@ def main():
 	game_state['previous_actions'] = [None for _ in agents]
 	game_state['turn_count'] = 0
 	game_state['food_positions'] = [False for _ in range(grid_size)]
-	game_state['resources'] = [dict() for _ in agents]
+	game_state['resources'] = [{"food": 0} for _ in agents]
 
 	post_iteration_callback = debug_post_iteration_callback
 
@@ -95,6 +95,7 @@ def main():
 		game_iterate=game_iterate,
 		instruction_set=instruction_set,
 		instruction_costs=instruction_costs,
+		instruction_ticks_per_game_ticks=100,
 
 		# mutable between iterations
 		agents=agents,
