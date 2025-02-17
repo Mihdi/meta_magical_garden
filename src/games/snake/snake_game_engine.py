@@ -107,7 +107,7 @@ def snake_iteration(
 
 	new_dead_agents = [da for da in dead_agents]
 	new_agent_positions = [ap for ap in agent_positions]
-	new_food_positions = [f for f in food_positions]
+	new_food_positions = [f for f in food_positions] # whether there is food at position i of grid
 
 	# generate new food
 	generated_food = food_generator_per_tick(turn_count)
@@ -142,13 +142,15 @@ def snake_iteration(
 
 	# resources
 	new_resources = [resources[agent_id] for agent_id in range(len(agent_positions))]
+	print(f"->new_resources: {new_resources}")
 
 	# feed agents
 	for agent_id in range(len(actions)):
 		agent_position = new_agent_positions[agent_id]
-		if not new_dead_agents[agent_id] and new_food_positions[agent_id]:
+		if not new_dead_agents[agent_id] and new_food_positions[new_agent_positions[agent_id]]:
+			print(f"--> snake #{agent_id} has just eaten")
 			new_resources[agent_id]['food'] += 1
-			new_food_positions[agent_id] = False
+			new_food_positions[new_agent_positions[agent_id]] = False
 
 	# fill the new grid
 	new_grid = [False for _ in grid]
