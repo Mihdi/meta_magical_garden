@@ -50,10 +50,13 @@ def apply_genetic_algorithm_iteration(
 	# initialization
 	# fitness
 	fitness = compute_fitness(population)
-	sorted_population_by_fitness = zip(
-		population,
-		fitness
-	).sort(
+	population_by_fitness = list(
+		zip(
+			population,
+			fitness
+		)
+	)
+	population_by_fitness.sort(
 		key=lambda pf: pf[1], # order by fitness
 		reverse=True # make it in decreasing order
 	)
@@ -61,10 +64,10 @@ def apply_genetic_algorithm_iteration(
 	# selection
 	nb_survivors = int(len(population) * selection_rate)
 	population = [
-		sorted_population_by_fitness[i][0] if i < nb_survivors else None
+		population_by_fitness[i][0] if i < nb_survivors else None
 		for i in range(len(population))
 	]
-	population = population_replacement_strategy.value(population)
+	population = population_replacement_strategy[0](population)
 
 	# crossover
 	parents = no_repeat_int_random_generator(nb_parents_for_crossover, 0, len(population))

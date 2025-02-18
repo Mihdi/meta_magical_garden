@@ -1,2 +1,2 @@
 #!/bin/sh
-pytest
+pytest -s
