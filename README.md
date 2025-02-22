@@ -10,3 +10,4 @@ Licensing is still to be determined though, but you can already assume that this
 
 ## How to run the code
 Given a recent Python3 install and a Bash interpreter, just execute the `launch.sh` file for a demo!
+If you prefer, you may also use the Dockerfile by executing the `docker_launch.sh` file.

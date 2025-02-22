@@ -1,8 +1,17 @@
 from games.snake.snake_instructions import conditionally_jumps_to_position_if_next_is_0, load_state_at_position, submit_instruction_up, submit_instruction_right, submit_instruction_down, submit_instruction_left
-from games.snake.snake_game_engine import snake_iteration
+from games.snake.snake_game_engine import snake_game_generator
 from utils.grid_utils import convert_2d_position_to_1d
 from utils.print_utils import debug_post_iteration_callback
 from engine.engine import perform_n_iterations
+
+from random import randint
+
+def generate_random_position_every_nth(current_i: int, n: int, distribution_range: int):
+	if current_i % n == 0:
+		out = randint(0, distribution_range-1)
+		print(f"randint gave {out}")
+		return [out]
+	return []
 
 def main():
 	instruction_set = dict()
@@ -24,10 +33,11 @@ def main():
 
 	grid_column_length = 10
 	grid_row_length = 10
+	grid_size = grid_column_length * grid_row_length
 
 	n = 100
 
-	game_iterate=snake_iteration
+	game_iterate=snake_game_generator(lambda turn_index, grid_size=grid_size: generate_random_position_every_nth(turn_index, 10, grid_size))
 	agents=[
 		[
 			# apply same principle as the following pseudo assembly:
@@ -58,10 +68,6 @@ def main():
 		]
 	]
 
-	for agent in agents:
-		for symbol in agent:
-			print(f"`{chr(symbol)}", end="`,\t")
-	print("")
 
 	pointers = [0 for _ in agents]
 	agents_freeze_values = [0 for _ in agents]
@@ -74,6 +80,10 @@ def main():
 	game_state['agent_positions'] = [
 		convert_2d_position_to_1d(0, 0, grid_column_length)
 	]
+	game_state['previous_actions'] = [None for _ in agents]
+	game_state['turn_count'] = 0
+	game_state['food_positions'] = [False for _ in range(grid_size)]
+	game_state['resources'] = [{"food": 0} for _ in agents]
 
 	post_iteration_callback = debug_post_iteration_callback
 
@@ -85,6 +95,7 @@ def main():
 		game_iterate=game_iterate,
 		instruction_set=instruction_set,
 		instruction_costs=instruction_costs,
+		instruction_ticks_per_game_ticks=100,
 
 		# mutable between iterations
 		agents=agents,
