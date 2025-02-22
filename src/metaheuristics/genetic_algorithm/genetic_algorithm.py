@@ -46,6 +46,7 @@ def apply_genetic_algorithm_iteration(
 	# nb_crossovers: int, todo: out of laziness, for now, only one crossover per iteration. Sorry. Feel free to implement more.
 	mutation_rate: float,
 	mutate: Callable[(any), any],
+	verbose = False
 ) -> List[any]:
 	# initialization
 	# fitness
@@ -62,22 +63,30 @@ def apply_genetic_algorithm_iteration(
 	)
 
 	# selection
-	nb_survivors = int(len(population) * selection_rate)
-	population = [
+	nb_survivors = int(len(population_by_fitness) * selection_rate)
+	surviving_population = [
 		population_by_fitness[i][0] if i < nb_survivors else None
-		for i in range(len(population))
+		for i in range(len(population_by_fitness))
 	]
-	population = population_replacement_strategy[0](population)
+	replaced_population = population_replacement_strategy[0](surviving_population)
 
 	# crossover
-	parents = no_repeat_int_random_generator(nb_parents_for_crossover, 0, len(population))
-	children = crossover([population[i] for i in parents])
+	parents = no_repeat_int_random_generator(nb_parents_for_crossover, 0, len(replaced_population))
+	children = crossover([replaced_population[i] for i in parents])
 	
+	post_crossover_pop = [p for p in replaced_population]
 	for i, parent_index in enumerate(parents):
-		population[parent_index] = children[i]
+		post_crossover_pop[parent_index] = children[i]
 
 	# mutation
-	is_mutant = [roll < mutation_rate for roll in random_generator(len(population))]
-	population = [mutate(population[i]) if is_mutant[i] else  population[i] for i in range(len(population))]
+	is_mutant = [roll < mutation_rate for roll in random_generator(len(post_crossover_pop))]
+	out = [mutate(post_crossover_pop[i]) if is_mutant[i] else post_crossover_pop[i] for i in range(len(post_crossover_pop))]
 
-	return population
+	if verbose:
+		print(f"population_by_fitness: {population_by_fitness}")
+		print(f"surviving_population: {surviving_population}")
+		print(f"replaced_population: {replaced_population}")
+		print(f"post_crossover_pop: {post_crossover_pop}")
+		print(f"out: {out}")
+
+	return out
