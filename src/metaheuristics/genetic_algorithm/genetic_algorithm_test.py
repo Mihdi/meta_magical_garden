@@ -27,7 +27,7 @@ def no_repeat_int_random_generator(length: int, min_val: int, max_val: int):
 def crossover(
 	parents: List[List[float]]
 ) -> List[List[float]]:
-	split_point = randint(0, len(parents[0]))
+	split_point = randint(0, len(parents[0])-1)
 	return [
 		parents[0][:split_point] + parents[1][split_point:],
 		parents[1][:split_point] + parents[0][split_point:],
@@ -55,7 +55,7 @@ def test():
 	random_generator = lambda n: [random() for _ in range(n)]
 	nb_parents_for_crossover = 2
 	mutation_rate = 0.05
-	mutate = lambda agent: [generate_agent() if i == randint(0, len(agent)) else agent[i] for i in range(len(agent))]
+	mutate = lambda agent: [generate_agent() if i == randint(0, len(agent)-1) else agent[i] for i in range(len(agent))]
 
 	results = []
 	for i in range(100*1000):

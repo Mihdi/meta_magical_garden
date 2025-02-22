@@ -6,6 +6,8 @@ from engine.engine import perform_n_iterations
 
 from random import randint
 
+from experiments.ga_solving_snake import main as m2
+
 def generate_random_position_every_nth(current_i: int, n: int, distribution_range: int):
 	if current_i % n == 0:
 		out = randint(0, distribution_range-1)
@@ -106,4 +108,5 @@ def main():
 
 
 if __name__ == '__main__':
-	main()
+	# main()
+	m2()
