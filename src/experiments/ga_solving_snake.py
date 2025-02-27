@@ -1,5 +1,5 @@
 from random import random, randint
-from typing import Callable, List
+from typing import Callable, Dict, List
 from statistics import mean 
 import matplotlib.pyplot as plt
 
@@ -131,6 +131,11 @@ def crossover(
 		parents[1][:split_point] + parents[0][split_point:],
 	]
 
+def remap_dict_keys_to_allowed_alphabet(d: Dict[int, any], allowed_alphabet: List[int]) -> Dict[int, any]:
+	set_alphabet = list(d.keys())
+	assert len(allowed_alphabet) >= len(set_alphabet), "remapping is impossible because the allowed alphabet is too small"
+	
+
 def test():
 	instruction_set = dict()
 	instruction_set[ord('J')] = conditionally_jumps_to_position_if_next_is_0
@@ -150,8 +155,8 @@ def test():
 
 	# primitive config parameters
 	agent_length = 100
-	grid_column_length = 10
-	grid_row_length = 10
+	grid_column_length = 1000
+	grid_row_length = 1000
 	mutation_rate = 0.1
 	nb_parents_for_crossover = 2
 	population_replacement_strategy = PopulationReplacementStrategy.ELITIST
@@ -168,7 +173,7 @@ def test():
 	random_generator = lambda n: [random() for _ in range(n)]
 	no_repeat_int_random_generator = lambda l, mn, mx: no_repeat_int_random_generator(l, mn, mx)
 	crossover = lambda p: crossover(p) 
-	instruction_list = list(instruction_set.keys())
+	instruction_list = list(instruction_set.keys()) + list(range(agent_length))
 	mutate = lambda agent, instructions=instruction_list: [generate_random_instruction(instructions) if i == randint(0, len(agent)-1) else agent[i] for i in range(len(agent))]
 
 	# initialization
@@ -183,6 +188,10 @@ def test():
 	)
 	population = [generate_agent() for _ in range(population_size)]
 	compute_fitness = lambda pop: fitness(pop)
+
+	for i, a in enumerate(population):
+		s = [chr(c) for c in a]
+		print(f"[{len(a)}]#{i}:\t {s}")
 
 	results = []
 	for i in range(nb_ga_iterations):
